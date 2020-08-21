@@ -20,8 +20,10 @@ export async function getReportUrlsByBranch(branchName: string, buildName = "bui
       return build.build_parameters.CIRCLE_JOB === buildName
     })
 
+    console.log(`${circleCIApiUrl}/${latestBuild?.build_num}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}&branch=${branchName}`)
+
     const currentUrl = await getReportUrl(`${circleCIApiUrl}/${process.env.CIRCLE_BUILD_NUM}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}`)
-    const branchUrl = await getReportUrl(`${circleCIApiUrl}/${latestBuild.build_num}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}&branch=${branchName}`)
+    const branchUrl = await getReportUrl(`${circleCIApiUrl}/${latestBuild?.build_num}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}&branch=${branchName}`)
 
     return { currentUrl, branchUrl }
   } catch (error) {
