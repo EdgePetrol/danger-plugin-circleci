@@ -20,15 +20,13 @@ export async function getReportUrlsByBranch(branchName: string, buildName = "bui
       return build.build_parameters.CIRCLE_JOB === buildName
     })
 
-    console.log(`${circleCIApiUrl}/${latestBuild?.build_num}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}&branch=${branchName}`)
-
     const currentUrl = await getReportUrl(`${circleCIApiUrl}/${process.env.CIRCLE_BUILD_NUM}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}`)
     const branchUrl = await getReportUrl(`${circleCIApiUrl}/${latestBuild?.build_num}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}&branch=${branchName}`)
 
     return { currentUrl, branchUrl }
   } catch (error) {
     // tslint:disable-next-line no-console
-    console.error("Error fetching circleCI latest build url: ", error)
+    console.warn("Error fetching circleCI latest build url:", error)
     return undefined
   }
 }
@@ -51,7 +49,7 @@ const getReportUrl = async (url: string) => {
     return `${coverageUrl.url}?circle-token=${process.env.CIRCLE_TOKEN}`
   } catch (error) {
     // tslint:disable-next-line no-console
-    console.error("Error fetching circleCI url: ", error)
+    console.warn("Error fetching circleCI url: ", error)
     return undefined
   }
 }
