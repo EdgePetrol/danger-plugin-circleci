@@ -21,35 +21,27 @@ export async function getReportUrlsByBranch(branchName: string, buildName = "bui
     })
 
     const currentUrl = await getReportUrl(`${circleCIApiUrl}/${process.env.CIRCLE_BUILD_NUM}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}`)
-    const branchUrl = await getReportUrl(`${circleCIApiUrl}/${latestBuild?.build_num}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}&branch=${branchName}`)
+    const branchUrl = await getReportUrl(`${circleCIApiUrl}/${latestBuild?.build_num}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}`, branchName)
 
     return { currentUrl, branchUrl }
   } catch (error) {
-    // tslint:disable-next-line no-console
-    console.warn("Error fetching circleCI latest build url:", error)
     return undefined
   }
 }
 
-const getReportUrl = async (url: string) => {
+const getReportUrl = async (url: string, branchName?: string) => {
   try {
     const response = await fetch(url)
     const data = await response.json()
 
     const coverageUrl = _.find(data, artifact => {
-      if (!artifact.hasOwnProperty("url")) {
-        return undefined
-      }
+      if (!artifact.hasOwnProperty("url")) { return }
 
       return artifact.url.endsWith("lcov-report/index.html")
     })
 
-    if (coverageUrl === undefined) { return undefined }
-
-    return `${coverageUrl.url}?circle-token=${process.env.CIRCLE_TOKEN}`
+    return `${coverageUrl?.url}?circle-token=${process.env.CIRCLE_TOKEN}&branch=${branchName}`
   } catch (error) {
-    // tslint:disable-next-line no-console
-    console.warn("Error fetching circleCI url: ", error)
     return undefined
   }
 }
