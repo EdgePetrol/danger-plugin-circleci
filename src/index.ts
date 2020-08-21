@@ -7,7 +7,7 @@ export declare function warn(message: string): void
 export declare function fail(message: string): void
 export declare function markdown(message: string): void
 
-export async function getReportUrlsByBranch(branchName: string) {
+export async function getReportUrlsByBranch(branchName: string, buildName = "build") {
   try {
     const circleCIApiUrl = `https://circleci.com/api/v1.1/project/github/${process.env.CIRCLE_PROJECT_USERNAME}/${process.env.CIRCLE_PROJECT_REPONAME}`
 
@@ -17,7 +17,7 @@ export async function getReportUrlsByBranch(branchName: string) {
     const data = await response.json()
 
     const latestBuild = _.find(data, build => {
-      return build.build_parameters.CIRCLE_JOB === "build"
+      return build.build_parameters.CIRCLE_JOB === buildName
     })
 
     const currentUrl = await getReportUrl(`${circleCIApiUrl}/${process.env.CIRCLE_BUILD_NUM}/artifacts?circle-token=${process.env.CIRCLE_TOKEN}`)
