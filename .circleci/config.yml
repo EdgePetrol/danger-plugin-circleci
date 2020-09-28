@@ -1,0 +1,53 @@
+version: 2.1
+workflows:
+  test-workflow:
+    jobs:
+      - build:
+          context: EdgePetrolApp
+jobs:
+  build:
+    working_directory: ~/mern-starter
+    docker:
+      - image: circleci/node:10.16.3
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - run: yarn install --pure-lockfile --non-interactive
+      - save_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: test
+          command: |
+            mkdir -p /tmp/coverage
+            yarn run test && yarn run generate-badge
+      - store_artifacts:
+          path: coverage/coverage-final.json
+          prefix: tests
+      - store_artifacts:
+          path: test/coverage
+          prefix: coverage
+      - run:
+          name: Store coverage report
+          command: |
+            mv coverage/coverage-summary.json /tmp/coverage/
+            mv coverage/badge.svg /tmp/coverage/
+      - run:
+          name: Upload coverage to be persistent
+          command: |
+            mkdir -p /tmp/internal
+            cd /tmp/internal
+            git config --global user.email "bot@edgepetrol.com"
+            git config --global user.name "EdgeBot"
+            git clone https://EdgePetrolBot:${DANGER_GITHUB_API_TOKEN}@github.com/EdgePetrol/coverage.git
+            cd coverage
+            mkdir -p ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
+            mv /tmp/coverage/* /tmp/internal/coverage/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
+            newFiles=$(git ls-files --others --exclude-standard | wc -l)
+            modFiles=$(git diff --name-only | wc -l)
+            if [[ $(($modFiles + 0)) > 0 || $(($newFiles + 0)) > 0 ]]; then
+              git add . && git commit -m "Add ${CIRCLE_PROJECT_REPONAME} coverage"
+              git push --set-upstream origin master
+            fi

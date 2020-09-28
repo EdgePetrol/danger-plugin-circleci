@@ -2,7 +2,7 @@ import { getReportUrlsByBranch } from "./index"
 
 declare const global: any
 
-describe("circleci()", () => {
+describe("#getReportUrlsByBranch(branch)", () => {
   beforeEach(() => {
     global.warn = jest.fn()
     global.message = jest.fn()
@@ -17,15 +17,7 @@ describe("circleci()", () => {
     global.markdown = undefined
   })
 
-  it("Checks for a that message has been called", () => {
-    global.danger = {
-      github: { pr: { title: "My Test Title" } },
-    }
-
-    getReportUrlsByBranch("staging")
-
-    expect(global.message).toHaveBeenCalledWith(
-      "PR Title: My Test Title",
-    )
+  it("returns undefined without no circle ci envs", async () => {
+    expect(await getReportUrlsByBranch("staging")).toBe(undefined)
   })
 })
