@@ -1,0 +1,11 @@
+[ {
+  "path" : "coverage/badge.svg",
+  "pretty_path" : "coverage/badge.svg",
+  "node_index" : 0,
+  "url" : "https://xxx.circle-artifacts.com/0/coverage/badge.svg"
+}, {
+  "path" : "coverage/coverage.json",
+  "pretty_path" : "coverage/coverage.json",
+  "node_index" : 0,
+  "url" : "https://xxx.circle-artifacts.com/0/lcov-report/index.html"
+} ]
