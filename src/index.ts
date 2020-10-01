@@ -32,6 +32,7 @@ export async function getReportUrlsByBranch(branchName: string, buildName = "bui
 const getReportUrl = async (url: string, branchName?: string) => {
   try {
     const response = await fetch(url)
+
     const data = await response.json()
 
     const coverageUrl = _.find(data, artifact => {
