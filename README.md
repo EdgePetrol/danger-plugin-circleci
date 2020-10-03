@@ -14,13 +14,16 @@ Install:
 yarn add danger-plugin-circleci --dev
 ```
 
-At a glance:
+Returns the urls for ´lcov-report/index.html´ stored on a specifc branch and a specific buildName
+
+the default values for buildName is `build`.
 
 ```js
 // dangerfile.js
 import circleci from 'danger-plugin-circleci'
 
-circleci()
+getReportUrlsByBranch(branchName, buildName='build')
+
 ```
 ## Changelog
 
