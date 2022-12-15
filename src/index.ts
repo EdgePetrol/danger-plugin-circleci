@@ -25,6 +25,7 @@ export async function getReportUrlsByBranch(branchName: string, buildName = "bui
 
     return { currentUrl, branchUrl }
   } catch (error) {
+    console.error(error);
     return undefined
   }
 }
